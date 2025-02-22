@@ -11,6 +11,9 @@ peer.on("open", (id) => {
     peerIdDisplay.textContent = id;
 });
 
+import { injectSpeedInsights } from '@vercel/speed-insights';
+injectSpeedInsights();
+
 //Handle incoming connections
 peer.on("connection", (conn) => {
     conn.on("data", (data) => {
@@ -33,7 +36,7 @@ peer.on("connection", (conn) => {
     });
 });
 
-// Send file
+//Send file
 sendButton.addEventListener("click", () => {
     const receiverId = receiverIdInput.value.trim();
     const file = fileInput.files[0];
