@@ -11,8 +11,8 @@ peer.on("open", (id) => {
     peerIdDisplay.textContent = id;
 });
 
-import { injectSpeedInsights } from '@vercel/speed-insights';
-injectSpeedInsights();
+// import { injectSpeedInsights } from '@vercel/speed-insights';
+// injectSpeedInsights();
 
 //Handle incoming connections
 peer.on("connection", (conn) => {
