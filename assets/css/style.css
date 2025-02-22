@@ -27,3 +27,39 @@ button {
 button:hover {
     background: darkblue;
 }
+
+.history-container {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.history-entry {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9em;
+}
+
+.history-entry .type {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.history-entry .time {
+    color: #666;
+    margin-right: 10px;
+}
+
+.history-entry .name {
+    color: #333;
+    margin-right: 10px;
+}
+
+.history-entry .size {
+    color: #666;
+    margin-right: 10px;
+}
+
+.history-entry .peer {
+    color: #666;
+    font-style: italic;
+}
