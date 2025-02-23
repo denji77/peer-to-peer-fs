@@ -1,17 +1,77 @@
-const peer = new Peer(); // Create PeerJS instance
+const cookieName = "peerjsUserId";  // Different name to avoid confusion
+
+// Cookie functions
+function setCookie(name, value, days) {
+    let expires = "";
+    if (days) {
+        let date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getCookie(name) {
+    let nameEQ = name + "=";
+    let ca = document.cookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+
+// Function to generate a unique user ID (alphanumeric only)
+function generateUserId() {
+    const characters = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < 10; i++) {  // Adjust length as needed
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    return result;
+}
+
+// Initialize or retrieve the user ID
+let userId = getCookie(cookieName);
+
+if (!userId) {
+    userId = generateUserId();  // Generate a random ID
+    setCookie(cookieName, userId, 365);
+}
+
+// Initialize PeerJS with persistent ID
+const peer = new Peer(userId); // Pass in the id, if the peerJs id is available
+
+peer.on("open", (id) => {
+    console.log("Peer ID generated:", id);
+    peerIdDisplay.textContent = id;
+
+});
+
+peer.on("error", (err) => {
+
+    console.error("PeerJS error:", err);
+        if (err.type === 'unavailable-id') {
+            peerIdDisplay.textContent = "ID unavailable, generating new ID";
+            userId = generateUserId(); // generate new
+            setCookie(cookieName, userId, 365); // Store the *new* ID in the cookie!
+            peer = new Peer(userId); // Create peer with new ID
+            peerIdDisplay.textContent = userId;
+
+        } else{
+             peerIdDisplay.textContent = "Error generating ID. See console."; // Provide feedback
+            alert("PeerJS Error: " + err.message);
+        }
+
+});
+
 const fileInput = document.getElementById("fileInput");
 const receiverIdInput = document.getElementById("receiverId");
 const sendButton = document.getElementById("sendFile");
 const transfersDiv = document.getElementById("transfers");
 const peerIdDisplay = document.getElementById("peer-id");
 const history = [];
-
-//Display the peer ID when ready
-peer.on("open", (id) => {
-    peerIdDisplay.textContent = id;
-});
-
-//Worthless
 
 //Dl a file
 function downloadFile(data, filename, type) {
@@ -105,7 +165,7 @@ function updateHistoryDisplay() {
             <span class="time">${entry.timestamp.toLocaleString()}</span>
             ${entry.name ? `<span class="name">${entry.name}</span>` : ''}
             <span class="size">${formatBytes(entry.size)}</span>
-            <span class="peer">${entry.type === 'sent' ? 'to' : 'from'} ${entry.to || entry.from}</span>
+            <span class="peer">${entry.type === 'sent' ? 'to' : 'from'} ${entry.to || peer.id}</span>
         </div>
     `).join('');
     document.getElementById('history').innerHTML = historyHTML;
