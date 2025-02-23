@@ -11,8 +11,19 @@ peer.on("open", (id) => {
     peerIdDisplay.textContent = id;
 });
 
-// import { injectSpeedInsights } from '@vercel/speed-insights';
-// injectSpeedInsights();
+//import { injectSpeedInsights } from '@vercel/speed-insights';
+//injectSpeedInsights();
+
+//Function to download a file
+function downloadFile(data, filename, type) {
+    const blob = new Blob([data], { type: type }); // Use provided type!
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    link.textContent = `Download ${filename}`; // Change text
+    transfersDiv.appendChild(link); // Append to transfersDiv
+}
 
 //Handle incoming connections
 peer.on("connection", (conn) => {

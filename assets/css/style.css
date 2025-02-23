@@ -3,63 +3,115 @@ body {
     text-align: center;
     background: #f4f4f4;
     padding: 20px;
+    margin: 0; /* Reset default margin */
 }
+
 .container {
     background: white;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    margin: auto;
+    max-width: 600px; /* Increased max-width for better readability */
+    margin: 20px auto; /* Center the container */
 }
-input, button {
+
+h1 {
+    margin-bottom: 20px;
+}
+
+input[type="file"],
+input[type="text"],
+button {
     display: block;
     width: 100%;
     margin: 10px 0;
-    padding: 10px;
+    padding: 12px; /* Increased padding for better touch target */
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    box-sizing: border-box; /* Ensures padding doesn't affect width */
 }
+
 button {
     background: blue;
     color: white;
     border: none;
     cursor: pointer;
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
+
 button:hover {
     background: darkblue;
 }
 
+/* History Section */
 .history-container {
     margin-top: 20px;
     text-align: left;
+    border: 1px solid #ddd; /* Add a border for visual separation */
+    border-radius: 5px;
+    padding: 10px;
 }
 
 .history-entry {
-    padding: 10px;
+    padding: 12px;
     border-bottom: 1px solid #eee;
-    font-size: 0.9em;
+    font-size: 1em; /* Slightly larger font size */
+    display: flex; /* Use flexbox for layout */
+    justify-content: space-between; /* Distribute space evenly */
+    align-items: center; /* Align items vertically */
+}
+
+.history-entry:last-child {
+    border-bottom: none; /* Remove border from the last entry */
 }
 
 .history-entry .type {
     font-weight: bold;
-    margin-right: 10px;
+    color: #333;
+    width: 80px; /* Fixed width for better alignment */
 }
 
 .history-entry .time {
     color: #666;
-    margin-right: 10px;
+    font-size: 0.9em;
+    width: 150px;
 }
 
 .history-entry .name {
     color: #333;
-    margin-right: 10px;
+    flex-grow: 1; /* Allow name to take up remaining space */
+    text-overflow: ellipsis; /* Handle long names */
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .history-entry .size {
     color: #666;
-    margin-right: 10px;
+    width: 80px;
+    text-align: right; /* Align size to the right */
 }
 
 .history-entry .peer {
     color: #666;
     font-style: italic;
+    width: 120px;
+    text-align: right;
+}
+
+/* Media Query for responsiveness */
+@media (max-width: 600px) {
+    .container {
+        padding: 15px;
+    }
+
+    .history-entry {
+        flex-direction: column; /* Stack items vertically */
+        align-items: flex-start; /* Align items to the start */
+    }
+
+    .history-entry > span {
+        width: 100%; /* Make each span take the full width */
+        margin-bottom: 5px;
+        text-align: left;
+    }
 }
