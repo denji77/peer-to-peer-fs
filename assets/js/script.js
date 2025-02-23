@@ -11,14 +11,15 @@ peer.on("open", (id) => {
     peerIdDisplay.textContent = id;
 });
 
+//Worthless
 
-//Function to download a file
+//Dl a file
 function downloadFile(data, filename, type) {
     const blob = new Blob([data], { type: type }); // Use provided type!
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = filename;
+    link.setAttribute("download", filename); // Use setAttribute for better compatibility
     link.textContent = `Download ${filename}`; // Change text
     transfersDiv.appendChild(link); // Append to transfersDiv
 }
@@ -26,22 +27,27 @@ function downloadFile(data, filename, type) {
 //Handle incoming connections
 peer.on("connection", (conn) => {
     conn.on("data", (data) => {
-        const blob = new Blob([new Uint8Array(data)], { type: "application/octet-stream" });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = "received-file.zip";
-        link.textContent = "Download received file";
-        transfersDiv.appendChild(link);
-        
-        // Add to history
-        history.push({
-            type: 'received',
-            timestamp: new Date(),
-            from: conn.peer,
-            size: data.byteLength
-        });
-        updateHistoryDisplay();
+
+        let filename = "received-file.dat"; // Default filename
+        let filetype = "application/octet-stream"; // Default type
+
+        try {
+            const receivedData = JSON.parse(data);
+            const blob = new Blob([new Uint8Array(receivedData.file)], { type: receivedData.type });
+            console.log("Received filename:", receivedData.name); // DEBUG
+            downloadFile(blob, receivedData.name, receivedData.type)
+            // Add to history
+            history.push({
+                type: 'received',
+                timestamp: new Date(),
+                from: conn.peer,
+                size: receivedData.size
+            });
+            updateHistoryDisplay();
+        } catch (e) {
+            console.error("Error receiving file", e);
+            alert("Error: Corrupted file received");
+        }
     });
 });
 
@@ -59,9 +65,18 @@ sendButton.addEventListener("click", () => {
     conn.on("open", () => {
         const reader = new FileReader();
         reader.onload = () => {
-            conn.send(reader.result);
+            const fileData = {
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                file: Array.from(new Uint8Array(reader.result))
+            };
+
+            console.log("File name:", file.name);
+
+            conn.send(JSON.stringify(fileData));
             transfersDiv.innerHTML += `<p>File sent to ${receiverId}</p>`;
-            
+
             // Add to history
             history.push({
                 type: 'sent',
