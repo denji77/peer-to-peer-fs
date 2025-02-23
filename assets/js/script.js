@@ -11,8 +11,6 @@ peer.on("open", (id) => {
     peerIdDisplay.textContent = id;
 });
 
-//import { injectSpeedInsights } from '@vercel/speed-insights';
-//injectSpeedInsights();
 
 //Function to download a file
 function downloadFile(data, filename, type) {
