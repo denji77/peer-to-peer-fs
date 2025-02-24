@@ -27,3 +27,4 @@ const getCookie = (name) => {
 };
 
 export { cookieName, setCookie, getCookie };
+//check
